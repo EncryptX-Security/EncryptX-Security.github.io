@@ -6,7 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const mobileSidebarToggle = document.querySelector('.mobile-sidebar-toggle');
   const themeToggle = document.querySelector('.theme-toggle');
   const themeIcon = document.querySelector('.theme-icon');
-  const logo = document.querySelector('.logo-svg');
+  const infoContainer = document.querySelector('.info-container');
+  const timeDisplay = document.getElementById('current-time');
 
   // Icons
   const moonIcon = `<path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />`;
@@ -28,15 +29,15 @@ document.addEventListener('DOMContentLoaded', () => {
     themeIcon.innerHTML = theme === 'dark' ? sunIcon : moonIcon;
   }
 
-function updateLogoColor(theme) {
-  if (logo) {
-    const color = theme === 'dark' ? '#ffffff' : '#000000';
-    const paths = logo.querySelectorAll('path, line, g');
-    paths.forEach(element => {
-      element.setAttribute('fill', color);
-    });
+  function updateLogoColor(theme) {
+    const logo = document.querySelector('.logo-svg');
+    if (logo) {
+      const paths = logo.querySelectorAll('path');
+      paths.forEach(path => {
+        path.setAttribute('fill', theme === 'dark' ? '#ffffff' : '#000000');
+      });
+    }
   }
-}
 
   function toggleTheme() {
     const currentTheme = body.getAttribute('data-theme');
@@ -46,30 +47,30 @@ function updateLogoColor(theme) {
 
   // Sidebar functions
   function toggleSidebar() {
-    const wasClosed = sidebar.classList.contains('closed');
-    sidebar.classList.toggle('closed');
-    
-    if (window.innerWidth > 768) {
-      const toggleIcon = sidebarToggle.querySelector('svg');
-      if (wasClosed) {
-        toggleIcon.style.position = 'relative';
-        toggleIcon.style.opacity = '1';
-        toggleIcon.style.transform = 'translateX(0)';
-      } else {
-        toggleIcon.style.position = 'fixed';
-        toggleIcon.style.top = '1rem';
-        toggleIcon.style.left = '1rem';
-        toggleIcon.style.opacity = '1';
-        toggleIcon.style.transform = 'translateX(0)';
-        toggleIcon.style.zIndex = '1000';
-      }
+    if (window.innerWidth <= 768) {
+      sidebar.classList.toggle('open');
+      document.body.style.overflow = sidebar.classList.contains('open') ? 'hidden' : '';
+    } else {
+      sidebar.classList.toggle('closed');
     }
   }
 
   function handleResize() {
     if (window.innerWidth <= 768) {
       sidebar.classList.remove('closed');
+      if (!sidebar.classList.contains('open')) {
+        document.querySelector('.mobile-sidebar-toggle').style.display = 'flex';
+      }
+    } else {
+      document.body.style.overflow = '';
+      document.querySelector('.mobile-sidebar-toggle').style.display = 'none';
     }
+  }
+
+  // Time display function
+  function updateTime() {
+    const now = new Date();
+    timeDisplay.textContent = now.toLocaleTimeString();
   }
 
   // Initialize
@@ -87,11 +88,23 @@ function updateLogoColor(theme) {
       }
     });
 
+    // Initialize time display
+    updateTime();
+    setInterval(updateTime, 1000);
+
     // Event listeners
     sidebarToggle.addEventListener('click', toggleSidebar);
     mobileSidebarToggle.addEventListener('click', toggleSidebar);
     themeToggle.addEventListener('click', toggleTheme);
     window.addEventListener('resize', handleResize);
+
+    // Close popup when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!infoContainer.contains(e.target)) {
+        document.querySelector('.info-popup').style.opacity = '0';
+        document.querySelector('.info-popup').style.visibility = 'hidden';
+      }
+    });
   }
 
   init();
