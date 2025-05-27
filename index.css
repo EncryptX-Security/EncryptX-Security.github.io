@@ -1,41 +1,47 @@
-/* Reset & base */
+:root {
+  /* Light Theme */
+  --sidebar-bg: #f8f8f9;
+  --main-bg: #fefeff;
+  --text-color: #222222;
+  --sidebar-text: #111111;
+  --border-color: #e0e0e0;
+  --hover-bg: #f0f0f0;
+}
+
+[data-theme="dark"] {
+  /* Dark Theme */
+  --sidebar-bg: #181818;
+  --main-bg: #202021;
+  --text-color: #f0f0f0;
+  --sidebar-text: #e0e0e0;
+  --border-color: #333333;
+  --hover-bg: #2a2a2a;
+}
+
 * {
-  box-sizing: border-box;
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
-body, html {
-  height: 100%;
+body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  /* Remove transitions on background and color for instant load */
-  transition: none;
   background-color: var(--main-bg);
-  color: var(--main-text);
+  color: var(--text-color);
 }
 
-/* Layout */
 .app {
   display: flex;
-  height: 100vh;
-  overflow: hidden;
-  transition: none;
+  min-height: 100vh;
 }
 
-/* Sidebar */
 .sidebar {
   width: 260px;
   background-color: var(--sidebar-bg);
   color: var(--sidebar-text);
+  border-right: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
-  border-right: 1px solid var(--border-color);
-  flex-shrink: 0;
-  transition: background-color 0.3s ease, color 0.3s ease;
-  position: relative;
-  z-index: 1000;
-  /* full height */
-  height: 100vh;
 }
 
 .sidebar-header {
@@ -43,202 +49,182 @@ body, html {
   align-items: center;
   justify-content: space-between;
   padding: 1rem;
-  /* Match height and border of main header bar */
-  height: 56px;
+  height: 60px;
   border-bottom: 1px solid var(--border-color);
 }
 
-.logo-link {
-  display: flex;
-  align-items: center;
-  color: inherit;
-  text-decoration: none;
-}
-
 .logo-svg {
-  width: 32px;
-  height: 32px;
-  stroke: currentColor;
-  fill: none;
+  width: 60x;  /* Increased from 32px */
+  height: 60px; /* Increased from 32px */
+  color: currentColor; /* Ensures SVG inherits text color */
 }
 
-.toggle-btn {
+.sidebar-toggle {
   background: none;
   border: none;
-  cursor: pointer;
   color: inherit;
-  padding: 0.3rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  cursor: pointer;
   width: 32px;
   height: 32px;
+  position: relative;
+  transition: transform 0.3s ease;
 }
 
-.toggle-btn svg {
+.sidebar-toggle svg {
   width: 24px;
   height: 24px;
-  stroke: currentColor;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.sidebar.closed .sidebar-toggle svg {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  transform: translateX(0);
+  z-index: 1000;
+  opacity: 0;
 }
 
 .sidebar-menu {
-  display: flex;
-  flex-direction: column;
   padding: 1rem;
   flex-grow: 1;
-  overflow-y: auto;
 }
 
 .menu-item {
+  display: flex;
+  align-items: center;
+  padding: 0.85rem 1rem; /* Increased vertical padding */
   color: inherit;
   text-decoration: none;
-  margin-bottom: 0.75rem;
-  font-weight: 600;
-  font-size: 1.1rem;
-  border-radius: 4px;
-  padding: 0.4rem 0.6rem;
-  transition: background-color 0.2s ease;
+  border-radius: 8px; /* More rounded corners */
+  margin-bottom: 0.5rem;
+  gap: 0.75rem;
+  transition: all 0.2s ease;
+  min-height: 44px; /* Minimum touch target size */
 }
 
-.menu-item:hover,
-.menu-item:focus {
-  background-color: var(--sidebar-hover-bg);
-  outline: none;
+.menu-item:hover {
+  background-color: var(--hover-bg);
+  transform: translateY(-1px); /* Slight lift effect */
+}
+
+.menu-icon {
+  width: 22px; /* Slightly larger icons */
+  height: 22px;
+  flex-shrink: 0;
 }
 
 .sidebar-footer {
   padding: 1rem;
-  font-size: 0.85rem;
   text-align: center;
   border-top: 1px solid var(--border-color);
-  color: var(--sidebar-footer);
+  font-size: 0.875rem;
 }
 
-/* Main content */
 .main {
   flex-grow: 1;
   background-color: var(--main-bg);
-  color: var(--main-text);
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-  transition: background-color 0.3s ease, color 0.3s ease;
-  /* Start with full width minus sidebar */
-  width: calc(100% - 260px);
-  transition: width 0.3s ease;
 }
 
-/* Header bar with theme toggle */
-.header-bar {
+.header {
   display: flex;
-  justify-content: flex-end;
   align-items: center;
-  padding: 1rem 1.5rem;
+  padding: 1rem;
+  height: 60px;
   border-bottom: 1px solid var(--border-color);
-  position: sticky;
-  top: 0;
-  background-color: var(--main-bg);
-  z-index: 500;
-  height: 56px;
 }
 
-/* Theme toggle button */
-.theme-toggle-btn {
+.mobile-sidebar-toggle-container {
+  display: none;
+  position: relative;
+}
+
+.mobile-sidebar-toggle {
   background: none;
   border: none;
-  cursor: pointer;
   color: inherit;
+  cursor: pointer;
+  margin-right: 1rem;
+}
+
+.mobile-toggle-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.title {
+  font-size: 1.25rem;
+  flex-grow: 1;
+}
+
+.theme-toggle {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
   width: 32px;
   height: 32px;
   padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
-.theme-toggle-btn svg {
+.theme-icon {
   width: 24px;
   height: 24px;
-  stroke: currentColor;
 }
 
-/* Content */
 .content {
   padding: 2rem;
-  flex-grow: 1;
-  overflow-y: auto;
 }
 
-/* Sidebar toggled off: collapse sidebar and expand main */
-.sidebar.closed {
-  width: 0 !important;
-  border: none;
-  overflow: hidden;
-  transition: width 0.3s ease;
-}
-
-/* Adjust main width when sidebar is closed */
-.sidebar.closed + .main {
-  width: 100% !important;
-  transition: width 0.3s ease;
-}
-
-/* Responsive for smaller screens */
 @media (max-width: 768px) {
   .sidebar {
     position: fixed;
     top: 0;
     left: 0;
-    height: 100vh;
+    height: 100%;
     transform: translateX(-100%);
-    width: 260px;
-    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
-    transition: transform 0.3s ease;
+    z-index: 100;
   }
 
   .sidebar.open {
     transform: translateX(0);
   }
 
-  /* When sidebar is open on mobile, main stays full width but behind overlay */
-  .sidebar.closed + .main {
-    width: 100% !important;
-  }
-  
-  /* Overlay to close sidebar by clicking outside */
-  .overlay {
+  .sidebar-toggle {
     display: none;
   }
-
-  .overlay.active {
+  
+  .mobile-sidebar-toggle-container {
     display: block;
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.3);
-    z-index: 900;
   }
-}
-
-/* Dark mode variables */
-body.dark {
-  --sidebar-bg: #181818;
-  --sidebar-text: #e0e0e0;
-  --border-color: #2c2c2c;
-  --sidebar-hover-bg: #2a2a2a;
-  --sidebar-footer: #888888;
-
-  --main-bg: #202021;
-  --main-text: #eee;
-}
-
-/* Light mode variables */
-body.light {
-  --sidebar-bg: #f8f8f9;
-  --sidebar-text: #111111;
-  --border-color: #dedede;
-  --sidebar-hover-bg: #e0e0e5;
-  --sidebar-footer: #666666;
-
-  --main-bg: #fefeff;
-  --main-text: #222;
+  
+  .sidebar.closed .mobile-toggle-icon {
+    animation: slideIn 0.3s ease forwards;
+  }
+  
+  .sidebar.open .mobile-toggle-icon {
+    animation: slideOut 0.3s ease forwards;
+  }
+  
+  @keyframes slideIn {
+    from {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideOut {
+    from {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+  }
 }
